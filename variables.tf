@@ -24,3 +24,9 @@ variable "create_table_athena_s3_output_bucket_name" {
   type        = string
   description = "Name of the S3 bucket where the Athena query results will be stored"
 }
+
+variable "resource_prefix" {
+  type        = string
+  default     = "athena-query-observability"
+  description = "Prefix used to name the resources created by this module"
+}
