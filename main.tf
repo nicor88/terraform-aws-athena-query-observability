@@ -68,7 +68,7 @@ module "lambda_create_iceberg_table_builder" {
 # creating a partitioned Iceberg table in Glue via Terraform is not possible: https://github.com/hashicorp/terraform-provider-aws/issues/36531
 # Instead we use a lambda function that use Athena DDL to create the table, and then we invoke it via Terraform
 
-module "athena_query_observability_lambda_create_iceberg_table" {
+module "lambda_create_iceberg_table" {
   source  = "terraform-aws-modules/lambda/aws"
   version = "7.15.0"
 
@@ -145,11 +145,11 @@ module "athena_query_observability_lambda_create_iceberg_table" {
   }
   cloudwatch_logs_retention_in_days = 1
 
-  image_uri = module.athena_query_observability_lambda_create_iceberg_table_builder.image_uri
+  image_uri = module.lambda_create_iceberg_table_builder.image_uri
 }
 
 resource "aws_lambda_invocation" "athena_query_observability_lambda_create_iceberg_table_invoke" {
-  function_name = module.athena_query_observability_lambda_create_iceberg_table.lambda_function_name
+  function_name = module.lambda_create_iceberg_table.lambda_function_name
   input = jsonencode({
     "force" : "true"
   })
