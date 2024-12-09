@@ -1,0 +1,2 @@
+data_location_bucket_name = "data-bucket"
+athena_query_results_bucket_name = "athena-query-results"

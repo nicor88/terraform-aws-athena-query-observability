@@ -88,6 +88,7 @@ module "lambda_create_iceberg_table" {
     GLUE_TABLE_NAME          = var.glue_table_name
     S3_BUCKET_TABLE_LOCATION = var.s3_bucket_table_location
     S3_TABLE_PREFIX          = var.s3_table_location_prefix
+    FORCE_TABLE_CREATION     = var.force_table_creation
   }
 
   policy_statements = {
@@ -152,7 +153,7 @@ module "lambda_create_iceberg_table" {
 resource "aws_lambda_invocation" "athena_query_observability_lambda_create_iceberg_table_invoke" {
   function_name = module.lambda_create_iceberg_table.lambda_function_name
   input = jsonencode({
-    "force" : "true"
+    "trigger" : var.force_table_creation_trigger
   })
   lifecycle_scope = "CRUD"
 }
@@ -234,7 +235,7 @@ resource "aws_cloudwatch_log_stream" "athena_observability_firehose_log_stream" 
 }
 
 resource "aws_kinesis_firehose_delivery_stream" "athena_observability_iceberg_delivery" {
-  name        = "${var.resource_prefix}-iceberg-delivery"
+  name        = "${var.resource_prefix}-iceberg-delivery${var.firehose_name_suffix}"
   destination = "iceberg"
 
   iceberg_configuration {
@@ -255,7 +256,7 @@ resource "aws_kinesis_firehose_delivery_stream" "athena_observability_iceberg_de
     destination_table_configuration {
       database_name = var.glue_database_name
       table_name    = var.glue_table_name
-      # s3_error_output_prefix = "_errors"
+      s3_error_output_prefix = var.firehose_s3_error_iceberg_prefix
     }
 
     cloudwatch_logging_options {

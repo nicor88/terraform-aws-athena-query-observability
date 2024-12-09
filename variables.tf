@@ -8,6 +8,18 @@ variable "glue_table_name" {
   description = "Table name containing query history"
 }
 
+variable "force_table_creation" {
+  type        = string
+  default     = "false"
+  description = "Force the creation of the table"
+}
+
+variable "force_table_creation_trigger" {
+  type        = string
+  default     = ""
+  description = "Trigger to force the recreation of the table"
+}
+
 variable "s3_table_location_prefix" {
   type        = string
   description = "Prefix ot the S3 location where the table data will be stored"
@@ -33,6 +45,12 @@ variable "resource_prefix" {
   type        = string
   default     = "athena-query-observability"
   description = "Prefix used to name the resources created by this module"
+}
+
+variable "firehose_name_suffix" {
+  description = "Firhose name suffifx, it can be used to force recreation of the Firehose delivery stream"
+  type        = string
+  default     = ""
 }
 
 variable "firehose_log_group_retention_in_days" {
@@ -62,6 +80,12 @@ variable "firehose_retry_duration" {
 variable "firehose_s3_error_output_prefix" {
   type        = string
   default     = "_errors"
+  description = "Suffix for the error output of the firehose"
+}
+
+variable "firehose_s3_error_iceberg_prefix" {
+  type        = string
+  default     = "_iceberg_errors"
   description = "Suffix for the error output of the firehose"
 }
 
