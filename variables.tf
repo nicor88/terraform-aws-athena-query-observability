@@ -88,3 +88,15 @@ variable "event_bridge_retry_policy_maximum_retry_attempts" {
   default     = 15
   description = "Maximum retry attempts for the event bridge retry policy"
 }
+
+variable "lambda_create_iceberg_table_log_group_retention_in_days" {
+  type        = number
+  default     = 1
+  description = "Retention period for the lambda create iceberg table log group"
+}
+
+variable "lambda_event_dispatcher_log_group_retention_in_days" {
+  type        = number
+  default     = 3
+  description = "Retention period for the lambda event dispatcher log group"
+}

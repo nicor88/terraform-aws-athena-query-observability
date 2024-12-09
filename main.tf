@@ -142,7 +142,9 @@ module "lambda_create_iceberg_table" {
       ]
     }
   }
-  cloudwatch_logs_retention_in_days = 1
+
+  cloudwatch_logs_retention_in_days = var.lambda_create_iceberg_table_log_group_retention_in_days
+
 
   image_uri = module.lambda_create_iceberg_table_builder.image_uri
 }
@@ -251,8 +253,8 @@ resource "aws_kinesis_firehose_delivery_stream" "athena_observability_iceberg_de
     }
 
     destination_table_configuration {
-      database_name          = var.glue_database_name
-      table_name             = var.glue_table_name
+      database_name = var.glue_database_name
+      table_name    = var.glue_table_name
       # s3_error_output_prefix = "_errors"
     }
 
@@ -360,7 +362,7 @@ module "athena_query_observability_event_dispatcher_lambda" {
       ]
     }
   }
-  cloudwatch_logs_retention_in_days = 3
+  cloudwatch_logs_retention_in_days = var.lambda_event_dispatcher_log_group_retention_in_days
 
   image_uri = module.athena_query_observability_lambda_event_dispatcher_builder.image_uri
 }
