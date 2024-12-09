@@ -32,3 +32,24 @@ module "athena_query_observability_from_github" {
   create_table_athena_s3_output_bucket_name = "athena-query-results-bucket"
 }
 ```
+
+## Force table recreation
+
+It's possible to force the table recreation in few ways.
+
+### Option 1: Use another table name
+Use this settings:
+
+```hcl
+glue_table_name = "table_name_v2"
+force_table_creation_trigger = "force"
+```
+In **glue_table_name** set a table name different than the previous one. In **force_table_creation_trigger** 
+put whatever value diffrent from the default value (empty string).
+
+### Option 2: Force table recreation and Firehose delivery stream recreation
+```hcl
+force_table_creation = "true"
+force_table_creation_trigger = "force_recreating_table"
+firehose_name_suffix = "-v2"
+```

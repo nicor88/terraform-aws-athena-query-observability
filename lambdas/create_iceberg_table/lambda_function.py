@@ -64,9 +64,9 @@ def get_create_table_statement(database_name, table_name, s3_table_location):
 
 def handler(event, context):
     logger.info('Event: {}'.format(event))
-    # TODO: skip delete event
 
     terraform_action = event.get('tf', {}).get('action')
+    logger.info(f'Terraform action: {terraform_action}')
 
     if terraform_action != ('create', 'update'):
         s3_table_location = os.path.join('s3://', S3_BUCKET_TABLE_LOCATION, S3_TABLE_PREFIX, str(uuid.uuid4()) + '/')
@@ -82,6 +82,7 @@ def handler(event, context):
             logger.info(f"Table '{GLUE_TABLE_NAME}' created in database '{GLUE_DATABASE_NAME}'")
         else:
             if FORCE_TABLE_CREATION:
+                logger.info(f"Force table recreation triggered")
                 current_utc_time = datetime.datetime.now(datetime.UTC)
                 formatted_time = current_utc_time.strftime('%Y%m%d_%H%M%S%f')
                 base_table_name = f'{GLUE_DATABASE_NAME}.{GLUE_TABLE_NAME}'
@@ -93,5 +94,7 @@ def handler(event, context):
                 cursor.execute(create_table_statement)
                 logger.info(cursor.fetchall())
                 logger.info(f"Table '{GLUE_TABLE_NAME}' created in database '{GLUE_DATABASE_NAME}'")
+            else:
+                logger.info(f"Skipping table re-creation...")
     else:
         logger.info(f"Skipping creation because of event '{terraform_action}'")

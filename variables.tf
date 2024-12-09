@@ -14,9 +14,10 @@ variable "force_table_creation" {
   description = "Force the creation of the table"
 }
 
-variable "force_firehose_creation" {
-  default = null
-  description = "It force firehose creation, after there was a table re-creation"
+variable "force_table_creation_trigger" {
+  type        = string
+  default     = ""
+  description = "Trigger to force the recreation of the table"
 }
 
 variable "s3_table_location_prefix" {
@@ -44,6 +45,12 @@ variable "resource_prefix" {
   type        = string
   default     = "athena-query-observability"
   description = "Prefix used to name the resources created by this module"
+}
+
+variable "firehose_name_suffix" {
+  description = "Firhose name suffifx, it can be used to force recreation of the Firehose delivery stream"
+  type        = string
+  default     = ""
 }
 
 variable "firehose_log_group_retention_in_days" {

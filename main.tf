@@ -153,7 +153,7 @@ module "lambda_create_iceberg_table" {
 resource "aws_lambda_invocation" "athena_query_observability_lambda_create_iceberg_table_invoke" {
   function_name = module.lambda_create_iceberg_table.lambda_function_name
   input = jsonencode({
-    "force" : "true"
+    "trigger" : var.force_table_creation_trigger
   })
   lifecycle_scope = "CRUD"
 }
@@ -235,7 +235,7 @@ resource "aws_cloudwatch_log_stream" "athena_observability_firehose_log_stream" 
 }
 
 resource "aws_kinesis_firehose_delivery_stream" "athena_observability_iceberg_delivery" {
-  name        = "${var.resource_prefix}-iceberg-delivery"
+  name        = "${var.resource_prefix}-iceberg-delivery${var.firehose_name_suffix}"
   destination = "iceberg"
 
   iceberg_configuration {
@@ -269,12 +269,6 @@ resource "aws_kinesis_firehose_delivery_stream" "athena_observability_iceberg_de
   depends_on = [
     aws_lambda_invocation.athena_query_observability_lambda_create_iceberg_table_invoke
   ]
-
-  lifecycle {
-    replace_triggered_by = [
-      var.force_firehose_creation
-    ]
-  }
 }
 
 resource "aws_cloudwatch_event_rule" "athena_query_observability_lambda_event_bridge_rule" {
