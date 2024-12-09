@@ -34,8 +34,7 @@ module "athena_query_observability_from_github" {
 ```
 
 ## Force table recreation
-
-It's possible to force the table recreation in few ways.
+It might be necessary to force table recreation in some cases, for example when changing the table schema because of a change of the table schema of the module.
 
 ### Option 1: Use another table name
 Use this settings:
@@ -44,12 +43,20 @@ Use this settings:
 glue_table_name = "table_name_v2"
 force_table_creation_trigger = "force"
 ```
-In **glue_table_name** set a table name different than the previous one. In **force_table_creation_trigger** 
-put whatever value diffrent from the default value (empty string).
+In **glue_table_name** set a table name different than the previous one e.g. "table_name_v2". In **force_table_creation_trigger** 
+put a value diffrent from the default value, that is an empty string.
 
 ### Option 2: Force table recreation and Firehose delivery stream recreation
 ```hcl
 force_table_creation = "true"
 force_table_creation_trigger = "force_recreating_table"
 firehose_name_suffix = "-v2"
+
 ```
+
+### Notes
+When forcing table recreation, it can be that some events gets losts, therefore be careful when using any of the proposed options.
+
+## Known issues
+* It can happen that the module doesn't delete Cloudwatch logs, you might need to do it manually. Anyhow, this can be problematic if you remove the module and add it again.
+* When forcing table recreation, it can happen that Firehose doesn't pick up the new table. The solution is to force recreation of the Firehose delivery stream by setting the `firehose_name_suffix` variable, or read the [force table recreation](#force-table-recreation) section.
