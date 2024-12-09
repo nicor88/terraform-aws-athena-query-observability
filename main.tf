@@ -269,6 +269,12 @@ resource "aws_kinesis_firehose_delivery_stream" "athena_observability_iceberg_de
   depends_on = [
     aws_lambda_invocation.athena_query_observability_lambda_create_iceberg_table_invoke
   ]
+
+  lifecycle {
+    replace_triggered_by = [
+      var.force_firehose_creation
+    ]
+  }
 }
 
 resource "aws_cloudwatch_event_rule" "athena_query_observability_lambda_event_bridge_rule" {

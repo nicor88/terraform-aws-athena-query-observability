@@ -14,6 +14,11 @@ variable "force_table_creation" {
   description = "Force the creation of the table"
 }
 
+variable "force_firehose_creation" {
+  default = null
+  description = "It force firehose creation, after there was a table re-creation"
+}
+
 variable "s3_table_location_prefix" {
   type        = string
   description = "Prefix ot the S3 location where the table data will be stored"
