@@ -64,27 +64,30 @@ def get_create_table_statement(database_name, table_name, s3_table_location):
 
 def handler(event, context):
     logger.info('Event: {}'.format(event))
-    s3_table_location = os.path.join('s3://', S3_BUCKET_TABLE_LOCATION, S3_TABLE_PREFIX, str(uuid.uuid4()) + '/')
-    logger.info(f'S3 table location: {s3_table_location}')
+    # TODO: skip delete event
 
-    create_table_statement = get_create_table_statement(GLUE_DATABASE_NAME, GLUE_TABLE_NAME, s3_table_location)
-    cursor = connect(work_group=WORKGROUP).cursor()
+    if event['tf']['action'] != 'delete':
+        s3_table_location = os.path.join('s3://', S3_BUCKET_TABLE_LOCATION, S3_TABLE_PREFIX, str(uuid.uuid4()) + '/')
+        logger.info(f'S3 table location: {s3_table_location}')
 
-    if not table_exists(GLUE_DATABASE_NAME, GLUE_TABLE_NAME):
-        logger.info(f"Table '{GLUE_TABLE_NAME}' does not exist in database '{GLUE_DATABASE_NAME}', creating it")
-        cursor.execute(create_table_statement)
-        logger.info(cursor.fetchall())
-        logger.info(f"Table '{GLUE_TABLE_NAME}' created in database '{GLUE_DATABASE_NAME}'")
-    else:
-        if FORCE_TABLE_CREATION:
-            current_utc_time = datetime.datetime.now(datetime.UTC)
-            formatted_time = current_utc_time.strftime('%Y%m%d_%H%M%S%f')
-            base_table_name = f'{GLUE_DATABASE_NAME}.{GLUE_TABLE_NAME}'
-            backup_table_name = f'{GLUE_DATABASE_NAME}.{GLUE_TABLE_NAME}_{formatted_time}'
-            # we first backup only if we force table re-creation
-            cursor.execute(f'ALTER TABLE {base_table_name} RENAME TO {backup_table_name}')
-            logger.info(f'{base_table_name} backed up to {backup_table_name}')
-            # we then re-create the table to the final location
+        create_table_statement = get_create_table_statement(GLUE_DATABASE_NAME, GLUE_TABLE_NAME, s3_table_location)
+        cursor = connect(work_group=WORKGROUP).cursor()
+
+        if not table_exists(GLUE_DATABASE_NAME, GLUE_TABLE_NAME):
+            logger.info(f"Table '{GLUE_TABLE_NAME}' does not exist in database '{GLUE_DATABASE_NAME}', creating it")
             cursor.execute(create_table_statement)
             logger.info(cursor.fetchall())
             logger.info(f"Table '{GLUE_TABLE_NAME}' created in database '{GLUE_DATABASE_NAME}'")
+        else:
+            if FORCE_TABLE_CREATION:
+                current_utc_time = datetime.datetime.now(datetime.UTC)
+                formatted_time = current_utc_time.strftime('%Y%m%d_%H%M%S%f')
+                base_table_name = f'{GLUE_DATABASE_NAME}.{GLUE_TABLE_NAME}'
+                backup_table_name = f'{GLUE_DATABASE_NAME}.{GLUE_TABLE_NAME}_{formatted_time}'
+                # we first backup only if we force table re-creation
+                cursor.execute(f'ALTER TABLE {base_table_name} RENAME TO {backup_table_name}')
+                logger.info(f'{base_table_name} backed up to {backup_table_name}')
+                # we then re-create the table to the final location
+                cursor.execute(create_table_statement)
+                logger.info(cursor.fetchall())
+                logger.info(f"Table '{GLUE_TABLE_NAME}' created in database '{GLUE_DATABASE_NAME}'")
