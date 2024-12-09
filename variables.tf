@@ -8,6 +8,12 @@ variable "glue_table_name" {
   description = "Table name containing query history"
 }
 
+variable "force_table_creation" {
+  type        = string
+  default     = "false"
+  description = "Force the creation of the table"
+}
+
 variable "s3_table_location_prefix" {
   type        = string
   description = "Prefix ot the S3 location where the table data will be stored"

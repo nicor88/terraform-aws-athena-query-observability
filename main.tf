@@ -88,6 +88,7 @@ module "lambda_create_iceberg_table" {
     GLUE_TABLE_NAME          = var.glue_table_name
     S3_BUCKET_TABLE_LOCATION = var.s3_bucket_table_location
     S3_TABLE_PREFIX          = var.s3_table_location_prefix
+    FORCE_TABLE_CREATION     = var.force_table_creation
   }
 
   policy_statements = {
