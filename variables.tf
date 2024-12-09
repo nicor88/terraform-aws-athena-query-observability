@@ -65,6 +65,12 @@ variable "firehose_s3_error_output_prefix" {
   description = "Suffix for the error output of the firehose"
 }
 
+variable "firehose_s3_error_iceberg_prefix" {
+  type        = string
+  default     = "_iceberg_errors"
+  description = "Suffix for the error output of the firehose"
+}
+
 variable "athena_query_state_change_event_pattern" {
   type        = list(string)
   default     = ["QUEUED", "RUNNING", "SUCCEEDED", "FAILED", "CANCELLED"]

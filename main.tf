@@ -255,7 +255,7 @@ resource "aws_kinesis_firehose_delivery_stream" "athena_observability_iceberg_de
     destination_table_configuration {
       database_name = var.glue_database_name
       table_name    = var.glue_table_name
-      # s3_error_output_prefix = "_errors"
+      s3_error_output_prefix = var.firehose_s3_error_iceberg_prefix
     }
 
     cloudwatch_logging_options {
