@@ -18,7 +18,7 @@ The main idea of this module is to make Athena query history querable via Iceber
 
 ### High level architecture
 
-![High level architecture](./docs/high-level-architecture.png)
+![High level architecture](./docs/architecture.png)
 
 
 ## Usage
