@@ -12,8 +12,17 @@ The main idea of this module is to make Athena query history querable via Iceber
 
 ## Resources created by this module
 - Lambda function to create the Iceberg table
-- Lambda function to dispatch Event Bridge notifications to Firhose
-- Firehose to send notifications to S3 as Iceberg table
+- Lambda function to dispatch Event Bridge notifications to Firehose, enriching the event with the query execution context
+- Event Bridge to trigger the Lambda function that dispatches the event to Firehose
+- Firehose to write to S3 with Iceberg format, and Glue Catalog as Iceberg Catalog
+
+To use properly this module you need to have a Glue Database, an Athena Workgroup and an S3 bucket to store Iceberg table.
+
+
+### High level architecture
+
+![High level architecture](./docs/architecture.png)
+
 
 ## Usage
 
