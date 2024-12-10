@@ -15,6 +15,12 @@ The main idea of this module is to make Athena query history querable via Iceber
 - Lambda function to dispatch Event Bridge notifications to Firhose
 - Firehose to send notifications to S3 as Iceberg table
 
+
+### High level architecture
+
+![High level architecture](./docs/high-level-architecture.png)
+
+
 ## Usage
 
 ```hcl
